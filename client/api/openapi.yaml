@@ -1,0 +1,1134 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: support@relational.ai
+    name: Delve Client SDK Support
+    url: https://www.relational.ai/support
+  description: This is a Client SDK for Delve API
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://www.relational.ai/terms/
+  title: Delve Client SDK
+  version: 1.1.3
+servers:
+- url: http://127.0.0.1:8010
+paths:
+  /transaction:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+        description: Optional description in *Markdown*
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResult'
+          description: A successful result is wrapped inside a TransactionResult
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResult'
+          description: The transaction was aborted. The result is wrapped inside a
+            TransactionResult
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfraError'
+          description: Unauthorized
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResult'
+          description: All errors are also wrapped inside a TransactionResult
+      summary: Issues a transaction to be executed
+components:
+  schemas:
+    InfraError:
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+      required:
+      - message
+      - status
+      type: object
+    AnyValue: {}
+    DBType:
+      type: string
+    Action:
+      discriminator:
+        propertyName: type
+      example:
+        type: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    CardinalityAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/CardinalityAction_allOf'
+    CollectProblemsAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    RelKey:
+      example:
+        keys:
+        - null
+        - null
+        values:
+        - null
+        - null
+        name: name
+        type: RelKey
+      properties:
+        keys:
+          items:
+            $ref: '#/components/schemas/DBType'
+          nullable: true
+          type: array
+        name:
+          default: ""
+          type: string
+        values:
+          items:
+            $ref: '#/components/schemas/DBType'
+          nullable: true
+          type: array
+        type:
+          default: RelKey
+          enum:
+          - RelKey
+          type: string
+      required:
+      - name
+      - type
+      type: object
+    Relation:
+      example:
+        columns:
+        - - null
+          - null
+        - - null
+          - null
+        rel_key:
+          keys:
+          - null
+          - null
+          values:
+          - null
+          - null
+          name: name
+          type: RelKey
+        type: Relation
+      properties:
+        columns:
+          items:
+            items:
+              $ref: '#/components/schemas/AnyValue'
+            type: array
+          nullable: true
+          type: array
+        rel_key:
+          $ref: '#/components/schemas/RelKey'
+        type:
+          default: Relation
+          enum:
+          - Relation
+          type: string
+      required:
+      - rel_key
+      - type
+      type: object
+    ImportAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/ImportAction_allOf'
+    Source:
+      properties:
+        name:
+          default: ""
+          type: string
+        path:
+          default: ""
+          type: string
+        value:
+          default: ""
+          type: string
+        type:
+          default: Source
+          enum:
+          - Source
+          type: string
+      required:
+      - name
+      - path
+      - type
+      - value
+      type: object
+    InstallAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/InstallAction_allOf'
+    ListEdbAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/CardinalityAction_allOf'
+    ListSourceAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    FileSchema:
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    CSVFileSchema:
+      allOf:
+      - $ref: '#/components/schemas/FileSchema'
+      - $ref: '#/components/schemas/CSVFileSchema_allOf'
+    JSONFileSchema:
+      allOf:
+      - $ref: '#/components/schemas/FileSchema'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    FileSyntax:
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    CSVFileSyntax:
+      allOf:
+      - $ref: '#/components/schemas/FileSyntax'
+      - $ref: '#/components/schemas/CSVFileSyntax_allOf'
+    JSONFileSyntax:
+      allOf:
+      - $ref: '#/components/schemas/FileSyntax'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    Integration:
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    Pair_Symbol_String_:
+      properties:
+        first:
+          default: ""
+          type: string
+        second:
+          default: ""
+          type: string
+        type:
+          default: Pair_Symbol_String_
+          enum:
+          - Pair_Symbol_String_
+          type: string
+      required:
+      - first
+      - second
+      - type
+      type: object
+    AzureIntegration:
+      allOf:
+      - $ref: '#/components/schemas/Integration'
+      - $ref: '#/components/schemas/AzureIntegration_allOf'
+    DefaultIntegration:
+      allOf:
+      - $ref: '#/components/schemas/Integration'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    S3Integration:
+      allOf:
+      - $ref: '#/components/schemas/Integration'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    LoadData:
+      properties:
+        content_type:
+          default: ""
+          type: string
+        data:
+          nullable: true
+          type: string
+        file_schema:
+          $ref: '#/components/schemas/FileSchema'
+        file_syntax:
+          $ref: '#/components/schemas/FileSyntax'
+        integration:
+          $ref: '#/components/schemas/Integration'
+        key: {}
+        path:
+          nullable: true
+          type: string
+        type:
+          default: LoadData
+          enum:
+          - LoadData
+          type: string
+      required:
+      - content_type
+      - key
+      - type
+      type: object
+    LoadDataAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/LoadDataAction_allOf'
+    ModifyWorkspaceAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/ModifyWorkspaceAction_allOf'
+    ParseAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/ParseAction_allOf'
+    QueryAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/QueryAction_allOf'
+    SetOptionsAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/SetOptionsAction_allOf'
+    StatusAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    Pair_AnyValue_AnyValue_:
+      properties:
+        first: {}
+        second: {}
+        type:
+          default: Pair_AnyValue_AnyValue_
+          enum:
+          - Pair_AnyValue_AnyValue_
+          type: string
+      required:
+      - type
+      type: object
+    UpdateAction:
+      allOf:
+      - $ref: '#/components/schemas/Action'
+      - $ref: '#/components/schemas/UpdateAction_allOf'
+    ActionResult:
+      discriminator:
+        propertyName: type
+      example:
+        type: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    CardinalityActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CardinalityActionResult_allOf'
+    AbstractProblem:
+      discriminator:
+        propertyName: type
+      example:
+        type: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    ClientProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/ClientProblem_allOf'
+    ExceptionProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/ExceptionProblem_allOf'
+    IntegrityConstraintProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/IntegrityConstraintProblem_allOf'
+    ICViolation:
+      properties:
+        rel_key:
+          $ref: '#/components/schemas/RelKey'
+        source:
+          default: ""
+          type: string
+        type:
+          default: ICViolation
+          enum:
+          - ICViolation
+          type: string
+      required:
+      - rel_key
+      - source
+      - type
+      type: object
+    IntegrityConstraintViolation:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/IntegrityConstraintViolation_allOf'
+    OutputProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/OutputProblem_allOf'
+    PersistProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/ExceptionProblem_allOf'
+    StorageProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/IntegrityConstraintProblem_allOf'
+    SyntaxNode:
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    Point:
+      properties:
+        column:
+          default: 0
+          type: integer
+        row:
+          default: 0
+          type: integer
+        type:
+          default: Point
+          enum:
+          - Point
+          type: string
+      required:
+      - column
+      - row
+      - type
+      type: object
+    Area:
+      properties:
+        end_point:
+          $ref: '#/components/schemas/Point'
+        start_point:
+          $ref: '#/components/schemas/Point'
+        type:
+          default: Area
+          enum:
+          - Area
+          type: string
+      required:
+      - end_point
+      - start_point
+      - type
+      type: object
+    Range:
+      properties:
+        area:
+          $ref: '#/components/schemas/Area'
+        end_byte:
+          default: 0
+          type: integer
+        input: {}
+        start_byte:
+          default: 0
+          type: integer
+        type:
+          default: Range
+          enum:
+          - Range
+          type: string
+      required:
+      - area
+      - end_byte
+      - start_byte
+      - type
+      type: object
+    Appl:
+      allOf:
+      - $ref: '#/components/schemas/SyntaxNode'
+      - $ref: '#/components/schemas/Appl_allOf'
+    Literal:
+      allOf:
+      - $ref: '#/components/schemas/SyntaxNode'
+      - $ref: '#/components/schemas/Literal_allOf'
+    Token:
+      allOf:
+      - $ref: '#/components/schemas/SyntaxNode'
+      - $ref: '#/components/schemas/Token_allOf'
+    LinkedList:
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          default: ""
+          type: string
+      required:
+      - type
+      type: object
+    Cons:
+      allOf:
+      - $ref: '#/components/schemas/LinkedList'
+      - $ref: '#/components/schemas/Cons_allOf'
+    Nil:
+      allOf:
+      - $ref: '#/components/schemas/LinkedList'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    SyntaxError:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/SyntaxError_allOf'
+    WorkspaceLoadProblem:
+      allOf:
+      - $ref: '#/components/schemas/AbstractProblem'
+      - $ref: '#/components/schemas/IntegrityConstraintProblem_allOf'
+    CollectProblemsActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsActionResult_allOf'
+    ImportActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    InstallActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    ListEdbActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/ListEdbActionResult_allOf'
+    ListSourceActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/InstallAction_allOf'
+    LoadDataActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    ModifyWorkspaceActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/ModifyWorkspaceActionResult_allOf'
+    ParseActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsActionResult_allOf'
+    QueryActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/QueryActionResult_allOf'
+    SetOptionsActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    StatusActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    UpdateActionResult:
+      allOf:
+      - $ref: '#/components/schemas/ActionResult'
+      - $ref: '#/components/schemas/CollectProblemsAction_allOf'
+    LabeledAction:
+      example:
+        name: name
+        action:
+          type: type
+        type: LabeledAction
+      properties:
+        action:
+          $ref: '#/components/schemas/Action'
+        name:
+          default: ""
+          type: string
+        type:
+          default: LabeledAction
+          enum:
+          - LabeledAction
+          type: string
+      required:
+      - action
+      - name
+      - type
+      type: object
+    Transaction:
+      example:
+        mode: OPEN
+        nowait_durable: false
+        debug_level: 0
+        dbname: dbname
+        readonly: false
+        abort: false
+        source_dbname: source_dbname
+        type: Transaction
+        actions:
+        - name: name
+          action:
+            type: type
+          type: LabeledAction
+        - name: name
+          action:
+            type: type
+          type: LabeledAction
+        version: 6
+      properties:
+        abort:
+          default: false
+          type: boolean
+        actions:
+          items:
+            $ref: '#/components/schemas/LabeledAction'
+          nullable: true
+          type: array
+        dbname:
+          default: ""
+          type: string
+        debug_level:
+          nullable: true
+          type: integer
+        mode:
+          default: OPEN
+          enum:
+          - OPEN
+          - CREATE
+          - CREATE_OVERWRITE
+          - OPEN_OR_CREATE
+          - CLONE
+          - CLONE_OVERWRITE
+          type: string
+        nowait_durable:
+          default: false
+          type: boolean
+        readonly:
+          default: false
+          type: boolean
+        source_dbname:
+          nullable: true
+          type: string
+        version:
+          nullable: true
+          type: integer
+        type:
+          default: Transaction
+          enum:
+          - Transaction
+          type: string
+      required:
+      - abort
+      - dbname
+      - mode
+      - nowait_durable
+      - readonly
+      - type
+      type: object
+    LabeledActionResult:
+      example:
+        result:
+          type: type
+        name: name
+        type: LabeledActionResult
+      properties:
+        name:
+          default: ""
+          type: string
+        result:
+          $ref: '#/components/schemas/ActionResult'
+        type:
+          default: LabeledActionResult
+          enum:
+          - LabeledActionResult
+          type: string
+      required:
+      - name
+      - result
+      - type
+      type: object
+    TransactionResult:
+      example:
+        output:
+        - columns:
+          - - null
+            - null
+          - - null
+            - null
+          rel_key:
+            keys:
+            - null
+            - null
+            values:
+            - null
+            - null
+            name: name
+            type: RelKey
+          type: Relation
+        - columns:
+          - - null
+            - null
+          - - null
+            - null
+          rel_key:
+            keys:
+            - null
+            - null
+            values:
+            - null
+            - null
+            name: name
+            type: RelKey
+          type: Relation
+        debug_level: 0
+        aborted: false
+        type: TransactionResult
+        actions:
+        - result:
+            type: type
+          name: name
+          type: LabeledActionResult
+        - result:
+            type: type
+          name: name
+          type: LabeledActionResult
+        version: 6
+        problems:
+        - type: type
+        - type: type
+      properties:
+        aborted:
+          default: false
+          type: boolean
+        actions:
+          items:
+            $ref: '#/components/schemas/LabeledActionResult'
+          nullable: true
+          type: array
+        debug_level:
+          nullable: true
+          type: integer
+        output:
+          items:
+            $ref: '#/components/schemas/Relation'
+          nullable: true
+          type: array
+        problems:
+          items:
+            $ref: '#/components/schemas/AbstractProblem'
+          nullable: true
+          type: array
+        version:
+          nullable: true
+          type: integer
+        type:
+          default: TransactionResult
+          enum:
+          - TransactionResult
+          type: string
+      required:
+      - aborted
+      - type
+      type: object
+    CardinalityAction_allOf:
+      properties:
+        relname:
+          nullable: true
+          type: string
+      type: object
+    CollectProblemsAction_allOf:
+      properties:
+        dummy:
+          nullable: true
+          type: string
+      type: object
+    ImportAction_allOf:
+      properties:
+        inputs:
+          items:
+            $ref: '#/components/schemas/Relation'
+          nullable: true
+          type: array
+      type: object
+    InstallAction_allOf:
+      properties:
+        sources:
+          items:
+            $ref: '#/components/schemas/Source'
+          nullable: true
+          type: array
+      type: object
+    CSVFileSchema_allOf:
+      properties:
+        types:
+          items:
+            type: string
+          nullable: true
+          type: array
+      type: object
+    CSVFileSyntax_allOf:
+      properties:
+        datarow:
+          default: 0
+          type: integer
+        delim:
+          default: ""
+          type: string
+        escapechar:
+          default: ""
+          type: string
+        header:
+          items:
+            type: string
+          nullable: true
+          type: array
+        header_row:
+          default: 0
+          type: integer
+        ignorerepeated:
+          default: false
+          type: boolean
+        missingstrings:
+          items:
+            type: string
+          nullable: true
+          type: array
+        normalizenames:
+          default: false
+          type: boolean
+        quotechar:
+          default: ""
+          type: string
+      required:
+      - datarow
+      - delim
+      - escapechar
+      - header_row
+      - ignorerepeated
+      - normalizenames
+      - quotechar
+      type: object
+    AzureIntegration_allOf:
+      properties:
+        credentials:
+          items:
+            $ref: '#/components/schemas/Pair_Symbol_String_'
+          nullable: true
+          type: array
+        name:
+          nullable: true
+          type: string
+        storage_allowed_locations:
+          items:
+            type: string
+          nullable: true
+          type: array
+        storage_blocked_locations:
+          items:
+            type: string
+          nullable: true
+          type: array
+        tenant_id:
+          nullable: true
+          type: string
+      type: object
+    LoadDataAction_allOf:
+      properties:
+        rel:
+          default: ""
+          type: string
+        value:
+          $ref: '#/components/schemas/LoadData'
+      required:
+      - rel
+      - value
+      type: object
+    ModifyWorkspaceAction_allOf:
+      properties:
+        delete_edb:
+          nullable: true
+          type: string
+        delete_source:
+          items:
+            type: string
+          nullable: true
+          type: array
+        enable_library:
+          nullable: true
+          type: string
+      type: object
+    ParseAction_allOf:
+      properties:
+        nonterm:
+          default: ""
+          type: string
+        source:
+          $ref: '#/components/schemas/Source'
+      required:
+      - nonterm
+      - source
+      type: object
+    QueryAction_allOf:
+      properties:
+        inputs:
+          items:
+            $ref: '#/components/schemas/Relation'
+          nullable: true
+          type: array
+        outputs:
+          items:
+            type: string
+          nullable: true
+          type: array
+        persist:
+          items:
+            type: string
+          nullable: true
+          type: array
+        source:
+          $ref: '#/components/schemas/Source'
+      required:
+      - source
+      type: object
+    SetOptionsAction_allOf:
+      properties:
+        abort_on_error:
+          nullable: true
+          type: boolean
+        debug:
+          nullable: true
+          type: boolean
+        debug_trace:
+          nullable: true
+          type: boolean
+        silent:
+          nullable: true
+          type: boolean
+      type: object
+    UpdateAction_allOf:
+      properties:
+        delta:
+          items:
+            $ref: '#/components/schemas/Pair_AnyValue_AnyValue_'
+          nullable: true
+          type: array
+        rel:
+          $ref: '#/components/schemas/RelKey'
+        updates:
+          items:
+            $ref: '#/components/schemas/Pair_AnyValue_AnyValue_'
+          nullable: true
+          type: array
+      required:
+      - rel
+      type: object
+    CardinalityActionResult_allOf:
+      properties:
+        result:
+          items:
+            $ref: '#/components/schemas/Relation'
+          nullable: true
+          type: array
+      type: object
+    ClientProblem_allOf:
+      properties:
+        error_code:
+          default: ""
+          type: string
+        is_error:
+          default: false
+          type: boolean
+        is_exception:
+          default: false
+          type: boolean
+        message:
+          default: ""
+          type: string
+        path:
+          default: ""
+          type: string
+        report:
+          default: ""
+          type: string
+      required:
+      - error_code
+      - is_error
+      - is_exception
+      - message
+      - path
+      - report
+      type: object
+    ExceptionProblem_allOf:
+      properties:
+        exception:
+          default: ""
+          type: string
+        exception_stacktrace:
+          nullable: true
+          type: string
+      required:
+      - exception
+      type: object
+    IntegrityConstraintProblem_allOf:
+      properties:
+        exception:
+          default: ""
+          type: string
+      required:
+      - exception
+      type: object
+    IntegrityConstraintViolation_allOf:
+      properties:
+        sources:
+          items:
+            $ref: '#/components/schemas/ICViolation'
+          nullable: true
+          type: array
+      type: object
+    OutputProblem_allOf:
+      properties:
+        exception:
+          default: ""
+          type: string
+        exception_stacktrace:
+          nullable: true
+          type: string
+        name:
+          default: ""
+          type: string
+      required:
+      - exception
+      - name
+      type: object
+    Appl_allOf:
+      properties:
+        arguments:
+          items:
+            $ref: '#/components/schemas/SyntaxNode'
+          nullable: true
+          type: array
+        error:
+          default: false
+          type: boolean
+        missing:
+          default: false
+          type: boolean
+        range:
+          $ref: '#/components/schemas/Range'
+        symbol:
+          default: ""
+          type: string
+      required:
+      - error
+      - missing
+      - range
+      - symbol
+      type: object
+    Literal_allOf:
+      properties:
+        missing:
+          default: false
+          type: boolean
+        range:
+          $ref: '#/components/schemas/Range'
+        value:
+          default: ""
+          type: string
+      required:
+      - missing
+      - range
+      - value
+      type: object
+    Token_allOf:
+      properties:
+        range:
+          $ref: '#/components/schemas/Range'
+        value:
+          default: ""
+          type: string
+      required:
+      - range
+      - value
+      type: object
+    Cons_allOf:
+      properties:
+        head:
+          $ref: '#/components/schemas/SyntaxNode'
+        tail:
+          $ref: '#/components/schemas/LinkedList'
+      required:
+      - head
+      - tail
+      type: object
+    SyntaxError_allOf:
+      properties:
+        next:
+          $ref: '#/components/schemas/SyntaxNode'
+        node:
+          $ref: '#/components/schemas/SyntaxNode'
+        trace:
+          $ref: '#/components/schemas/LinkedList'
+      required:
+      - node
+      - trace
+      type: object
+    CollectProblemsActionResult_allOf:
+      properties:
+        problems:
+          items:
+            $ref: '#/components/schemas/AbstractProblem'
+          nullable: true
+          type: array
+      type: object
+    ListEdbActionResult_allOf:
+      properties:
+        rels:
+          items:
+            $ref: '#/components/schemas/RelKey'
+          nullable: true
+          type: array
+      type: object
+    ModifyWorkspaceActionResult_allOf:
+      properties:
+        delete_edb_result:
+          items:
+            $ref: '#/components/schemas/RelKey'
+          nullable: true
+          type: array
+      type: object
+    QueryActionResult_allOf:
+      properties:
+        output:
+          items:
+            $ref: '#/components/schemas/Relation'
+          nullable: true
+          type: array
+      type: object
