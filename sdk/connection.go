@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	llclient "github.com/RelationalAI/go-client-sdk/client"
+	llclient "github.com/RelationalAI-oss/relationalai-sdk-go/client"
 	"go.uber.org/zap"
 )
 

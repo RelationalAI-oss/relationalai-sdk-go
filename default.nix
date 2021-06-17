@@ -7,7 +7,7 @@
 let pkg = pkgs.buildGoPackage rec {
   name = "delve-go-client-sdk-${version}";
   version = "1.1.3";
-  goPackagePath = "github.com/RelationalAI/go-client-sdk";
+  goPackagePath = "github.com/RelationalAI-oss/relationalai-sdk-go";
   src = ./.;
   goDeps = ./deps.nix;
 };
@@ -22,7 +22,7 @@ pkg.overrideAttrs(oldAttrs: rec {
     delve server &
     PID=$!
     sleep 15s
-    go test -v -count=1 -tags=integration github.com/RelationalAI/go-client-sdk/sdk || (kill -9 $PID && exit 1)
+    go test -v -count=1 -tags=integration github.com/RelationalAI-oss/relationalai-sdk-go/sdk || (kill -9 $PID && exit 1)
     echo "Shutting down delve server. Pid: $PID"
     kill -9 $PID
   '';

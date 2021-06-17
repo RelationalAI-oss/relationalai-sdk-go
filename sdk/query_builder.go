@@ -1,7 +1,7 @@
 package sdk
 
 import (
-	"github.com/RelationalAI/go-client-sdk/client"
+	"github.com/RelationalAI-oss/relationalai-sdk-go/client"
 )
 
 type QueryArgs struct {

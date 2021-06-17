@@ -6,7 +6,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/RelationalAI/go-client-sdk/client"
+	"github.com/RelationalAI-oss/relationalai-sdk-go/client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"

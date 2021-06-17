@@ -1,4 +1,4 @@
-module github.com/RelationalAI/go-client-sdk
+module github.com/RelationalAI-oss/relationalai-sdk-go
 
 go 1.16
 
