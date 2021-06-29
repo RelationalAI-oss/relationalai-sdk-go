@@ -25,7 +25,12 @@ func TestWorkflow(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, true, createDatabaseResult.Success)
 
-	// 2. install a source
+	// 2. list all the sources for the db
+	listSourceResult, err := conn.ListSource(ctx)
+	assert.Nil(t, err)
+	numberOfDefaultSources := len(listSourceResult.Sources)
+
+	// 3. install a source
 	src := client.NewSourceWithDefaults()
 	src.Name = "test-1.delve"
 	src.Value = "def foo = {(1,);(2,);(3,)}"
@@ -34,7 +39,11 @@ func TestWorkflow(t *testing.T) {
 	require.Equal(t, true, installSourceResult.Success)
 	require.Equal(t, 0, len(installSourceResult.Problems))
 
-	// 3. clone database
+	listSourceResult, err = conn.ListSource(ctx)
+	assert.Nil(t, err)
+	assert.Equal(t, numberOfDefaultSources+1, len(listSourceResult.Sources))
+
+	// 4. clone database
 	conn2 := NewConnection(dbname2, WithDebug(true), WithLogger(logger))
 	createDatabaseResult, err = conn2.CreateDatabase(ctx, CreateOverwrite)
 	require.Nil(t, err)
@@ -43,11 +52,6 @@ func TestWorkflow(t *testing.T) {
 	cloneDatabaseResult, err := conn2.CloneDatabase(ctx, conn.database, CloneOverwrite)
 	assert.Nil(t, err)
 	assert.Equal(t, true, cloneDatabaseResult.Success)
-
-	// 4. list all the sources for the db
-	listSourceResult, err := conn.ListSource(ctx)
-	assert.Nil(t, err)
-	assert.Equal(t, 6, len(listSourceResult.Sources))
 
 	// 5. delete a source
 	deleteSourcesResult, err := conn.DeleteSources(ctx, []string{"test-1.delve"})

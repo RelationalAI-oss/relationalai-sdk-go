@@ -5,9 +5,7 @@ RelationalAI SDK for Go
 ## Installation
 
 ```
-require (
-    github.com/RelationalAI-oss/relationalai-sdk-go
-)
+go get github.com/RelationalAI-oss/relationalai-sdk-go
 ```
 
 ## Usage
