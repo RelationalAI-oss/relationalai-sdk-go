@@ -1,7 +1,7 @@
 /*
- * Delve Client SDK
+ * RelationalAI SDK
  *
- * This is a Client SDK for Delve API
+ * This is a Client SDK for RelationalAI
  *
  * API version: 1.1.3
  * Contact: support@relational.ai
@@ -41,7 +41,7 @@ var (
 	xmlCheck  = regexp.MustCompile(`(?i:(?:application|text)/xml)`)
 )
 
-// APIClient manages communication with the Delve Client SDK API v1.1.3
+// APIClient manages communication with the RelationalAI SDK API v1.1.3
 // In most cases there should be only one, shared, APIClient.
 type APIClient struct {
 	cfg    *Configuration
