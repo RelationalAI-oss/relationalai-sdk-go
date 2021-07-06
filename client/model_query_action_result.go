@@ -1,7 +1,7 @@
 /*
- * Delve Client SDK
+ * RelationalAI SDK
  *
- * This is a Client SDK for Delve API
+ * This is a Client SDK for RelationalAI
  *
  * API version: 1.1.3
  * Contact: support@relational.ai

@@ -32,7 +32,7 @@ func TestWorkflow(t *testing.T) {
 
 	// 3. install a source
 	src := client.NewSourceWithDefaults()
-	src.Name = "test-1.delve"
+	src.Name = "test-1.rel"
 	src.Value = "def foo = {(1,);(2,);(3,)}"
 	installSourceResult, err := conn.InstallSource(ctx, []client.Source{*src})
 	require.Nil(t, err)
@@ -54,7 +54,7 @@ func TestWorkflow(t *testing.T) {
 	assert.Equal(t, true, cloneDatabaseResult.Success)
 
 	// 5. delete a source
-	deleteSourcesResult, err := conn.DeleteSources(ctx, []string{"test-1.delve"})
+	deleteSourcesResult, err := conn.DeleteSources(ctx, []string{"test-1.rel"})
 	assert.Nil(t, err)
 	assert.Equal(t, true, deleteSourcesResult.Success)
 
