@@ -3,7 +3,7 @@
  *
  * This is a Client SDK for RelationalAI
  *
- * API version: 1.1.3
+ * API version: 1.2.0
  * Contact: support@relational.ai
  */
 
